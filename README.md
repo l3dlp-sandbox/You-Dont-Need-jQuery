@@ -1,6 +1,8 @@
-## You Don't Need jQuery [![Build Status](https://travis-ci.org/oneuijs/You-Dont-Need-jQuery.svg)](https://travis-ci.org/oneuijs/You-Dont-Need-jQuery)
+## You (Might) Don't Need jQuery [![Build Status](https://travis-ci.org/oneuijs/You-Dont-Need-jQuery.svg)](https://travis-ci.org/oneuijs/You-Dont-Need-jQuery)
 
 Frontend environments evolve rapidly nowadays and modern browsers have already implemented a great deal of DOM/BOM APIs which are good enough for production use. We don't have to learn jQuery from scratch for DOM manipulation or event handling. In the meantime, thanks to the spread of frontend libraries such as React, Angular and Vue, manipulating the DOM directly becomes anti-pattern, so that jQuery usage has never been less important. This project summarizes most of the alternatives in native Javascript implementation to jQuery methods, with IE 10+ support.
+
+Note: jQuery is still a great library and has many valid use cases. Don’t migrate away if you don’t want to!
 
 ## Table of Contents
 
@@ -19,6 +21,7 @@ Frontend environments evolve rapidly nowadays and modern browsers have already i
 ## Translations
 
 * [한국어](./README.ko-KR.md)
+* [正體中文](./README.zh-TW.md)
 * [简体中文](./README.zh-CN.md)
 * [Bahasa Melayu](./README-my.md)
 * [Bahasa Indonesia](./README-id.md)
@@ -37,7 +40,7 @@ Frontend environments evolve rapidly nowadays and modern browsers have already i
 
 In place of common selectors like class, id or attribute we can use `document.querySelector` or `document.querySelectorAll` for substitution. The differences lie in:
 * `document.querySelector` returns the first matched element
-* `document.querySelectorAll` returns all matched elements as NodeList. It can be converted to Array using `Array.prototype.slice.call(document.querySelectorAll(selector));`
+* `document.querySelectorAll` returns all matched elements as NodeList. It can be converted to Array using `Array.prototype.slice.call(document.querySelectorAll(selector));` or any of the methods outlined in [makeArray](#makeArray)
 * If there are no elements matched, jQuery and `document.querySelectorAll` will return `[]`, whereas `document.querySelector` will return `null`.
 
 > Notice: `document.querySelector` and `document.querySelectorAll` are quite **SLOW**, thus try to use `document.getElementById`, `document.getElementsByClassName` or `document.getElementsByTagName` if you want to get a performance bonus.
@@ -76,6 +79,9 @@ In place of common selectors like class, id or attribute we can use `document.qu
 
   // or
   document.getElementById('id');
+  
+  // or
+  window['id']
   ```
 
 - [1.3](#1.3) <a name='1.3'></a> Query by attribute
@@ -100,7 +106,7 @@ In place of common selectors like class, id or attribute we can use `document.qu
 
 - [1.5](#1.5) <a name='1.5'></a> Sibling/Previous/Next Elements
 
-  + All siblings 
+  + All siblings
 
     ```js
     // jQuery
@@ -129,7 +135,7 @@ In place of common selectors like class, id or attribute we can use `document.qu
     // Native
     el.previousElementSibling;
     ```
-   + Next sibling
+  + Next sibling
 
     ```js
     // jQuery
@@ -142,7 +148,7 @@ In place of common selectors like class, id or attribute we can use `document.qu
   + All previous siblings
 
     ```js
-    // jQuery (optional filter selector) 
+    // jQuery (optional filter selector)
     $el.prevAll($filter);
 
     // Native (optional filter function)
@@ -154,7 +160,7 @@ In place of common selectors like class, id or attribute we can use `document.qu
       }
       return sibs;
     }
-    
+
   + All next siblings
 
     ```js
@@ -162,29 +168,37 @@ In place of common selectors like class, id or attribute we can use `document.qu
     $el.nextAll($filter);
 
     // Native (optional filter function)
-    function getAllSiblings(elem, filter) {
-      var sibs = [];
-      elem = elem.parentNode.firstChild;
-      do {
-          if (elem.nodeType === 3) continue; // ignore text nodes
-          if (!filter || filter(elem)) sibs.push(elem);
-      } while (elem = elem.nextSibling)
-    return sibs;
-}
-    
+    function getNextSiblings(elem, filter) {
+            var sibs = [];
+            var nextElem = elem.parentNode.firstChild;
+            do {
+                if (nextElem.nodeType === 3) continue; // ignore text nodes
+                if (nextElem === elem) continue; // ignore elem of target
+                if (nextElem === elem.nextElementSibling) {
+                    if (!filter || filter(elem)) {
+                        sibs.push(nextElem);
+                        elem = nextElem;
+                    }
+                }
+            } while(nextElem = nextElem.nextSibling)
+            return sibs;
+        }
+
 An example of filter function:
 
-    function exampleFilter(elem) {
-        switch (elem.nodeName.toUpperCase()) {
-            case 'DIV':
-                return true;
-            case 'SPAN':
-                return true;
-            default:
-                return false;
-        }
-    }
-    
+```js
+function exampleFilter(elem) {
+  switch (elem.nodeName.toUpperCase()) {
+    case 'DIV':
+      return true;
+    case 'SPAN':
+      return true;
+    default:
+      return false;
+  }
+}
+```
+
 - [1.6](#1.6) <a name='1.6'></a> Closest
 
   Return the first matched element by provided selector, traversing from current element up through its ancestors in the DOM tree.
@@ -259,6 +273,8 @@ An example of filter function:
     $('.radio').index(e.currentTarget);
 
     // Native
+    Array.from(document.querySelectorAll('.radio')).indexOf(e.currentTarget);
+    or
     Array.prototype.indexOf.call(document.querySelectorAll('.radio'), e.currentTarget);
     ```
 
@@ -338,10 +354,10 @@ An example of filter function:
 
     // Native
     function contains(selector, text) {
-       var elements = document.querySelectorAll(selector);
-       return Array.prototype.filter.call(elements, function(element){
-          return RegExp(text).test(element.textContent);
-       });
+      var elements = document.querySelectorAll(selector);
+      return Array.from(elements).filter(function(element) {
+        return RegExp(text).test(element.textContent);
+      });
     }
     ```
 
@@ -593,27 +609,29 @@ An example of filter function:
   Append child element after the last child of parent element
 
   ```js
-  // jQuery
-  $el.append('<div id="container">Hello World</div>');
+  // jQuery: unified syntax for DOMString and Node objects
+  $parent.append(newEl | '<div id="container">Hello World</div>');
 
-  // Native (HTML string)
-  el.insertAdjacentHTML('beforeend', '<div id="container">Hello World</div>');
+  // Native: different syntax
+  parent.insertAdjacentHTML('beforeend', '<div id="container">Hello World</div>');
+  parent.appendChild(newEl);
 
-  // Native (Element)
-  el.appendChild(newEl);
+  // Native (ES6-way): unified syntax
+  parent.append(newEl | '<div id="container">Hello World</div>');
   ```
 
 - [3.5](#3.5) <a name='3.5'></a> Prepend
 
   ```js
-  // jQuery
-  $el.prepend('<div id="container">Hello World</div>');
+  // jQuery: unified syntax for DOMString and Node objects
+  $parent.prepend(newEl | '<div id="container">Hello World</div>');
 
-  // Native (HTML string)
-  el.insertAdjacentHTML('afterbegin', '<div id="container">Hello World</div>');
-
-  // Native (Element)
-  el.insertBefore(newEl, el.firstChild);
+  // Native: different syntax
+  parent.insertAdjacentHTML('afterbegin', '<div id="container">Hello World</div>');
+  parent.insertBefore(newEl, parent.firstChild);
+  
+  // Native (ES6-way): unified syntax
+  parent.prepend(newEl | '<div id="container">Hello World</div>');
   ```
 
 - [3.6](#3.6) <a name='3.6'></a> insertBefore
@@ -685,7 +703,7 @@ An example of filter function:
   $el.empty();
 
   // Native
-  el.innerHTML = '';
+  el.innerHTML = null;
   ```
 
 - [3.11](#3.11) <a name='3.11'></a> wrap
@@ -697,7 +715,7 @@ An example of filter function:
   $('.inner').wrap('<div class="wrapper"></div>');
 
   // Native
-  Array.prototype.forEach.call(document.querySelectorAll('.inner'), (el) => {
+  Array.from(document.querySelectorAll('.inner')).forEach((el) => {
     const wrapper = document.createElement('div');
     wrapper.className = 'wrapper';
     el.parentNode.insertBefore(wrapper, el);
@@ -715,7 +733,7 @@ An example of filter function:
   $('.inner').unwrap();
 
   // Native
-  Array.prototype.forEach.call(document.querySelectorAll('.inner'), (el) => {
+  Array.from(document.querySelectorAll('.inner')).forEach((el) => {
     let elParentNode = el.parentNode;
 
     if(elParentNode !== document.body) {
@@ -733,12 +751,18 @@ An example of filter function:
   // jQuery
   $('.inner').replaceWith('<div class="outer"></div>');
 
-  // Native
-  Array.prototype.forEach.call(document.querySelectorAll('.inner'), (el) => {
+  // Native (alternative) - latest, Edge17+
+  Array.from(document.querySelectorAll('.inner')).forEach((el) => {
     const outer = document.createElement('div');
     outer.className = 'outer';
-    el.parentNode.insertBefore(outer, el);
-    el.parentNode.removeChild(el);
+    el.replaceWith(outer);
+  });
+
+  // Native
+  Array.from(document.querySelectorAll('.inner')).forEach((el) => {
+    const outer = document.createElement('div');
+    outer.className = 'outer';
+    el.parentNode.replaceChild(outer, el);
   });
   ```
 
@@ -909,7 +933,7 @@ Most of jQuery utilities are also found in the native API. Other advanced functi
   $.isNumeric(item);
 
   // Native
-  function isNumeric(value) {
+  function isNumeric(n) {
     return !isNaN(parseFloat(n)) && isFinite(n);
   }
   ```
@@ -927,7 +951,7 @@ Most of jQuery utilities are also found in the native API. Other advanced functi
     if (typeof item === 'function') {
       return true;
     }
-    var type = Object.prototype.toString(item);
+    var type = Object.prototype.toString.call(item);
     return type === '[object Function]' || type === '[object GeneratorFunction]';
   }
   ```
@@ -1058,19 +1082,18 @@ Most of jQuery utilities are also found in the native API. Other advanced functi
   Merge the contents of two arrays together into the first array.
 
   ```js
-  // jQuery
+  // jQuery, doesn't remove duplicate items
   $.merge(array1, array2);
 
-  // Native
-  // But concat function doesn't remove duplicate items.
+  // Native, doesn't remove duplicate items
   function merge(...args) {
     return [].concat(...args)
   }
 
-  // ES6-way, doesn't remove duplicate items.
+  // ES6-way, doesn't remove duplicate items
   array1 = [...array1, ...array2]
 
-  // Set version, can remove duplicate items
+  // Set version, does remove duplicate items
   function merge(...args) {
     return Array.from(new Set([].concat(...args)))
   }
@@ -1100,7 +1123,7 @@ Most of jQuery utilities are also found in the native API. Other advanced functi
   fn.bind(context);
   ```
 
-  + makeArray
+  <a name="makeArray"></a>+ makeArray
 
   Convert an array-like object into a true JavaScript array.
 
@@ -1111,8 +1134,10 @@ Most of jQuery utilities are also found in the native API. Other advanced functi
   // Native
   Array.prototype.slice.call(arrayLike);
 
-  // ES6-way
+  // ES6-way: Array.from() method
   Array.from(arrayLike);
+
+  // ES6-way: spread operator
   [...arrayLike];
   ```
 
@@ -1172,17 +1197,24 @@ Most of jQuery utilities are also found in the native API. Other advanced functi
     return context.body.children;
   }
   ```
+- [6.5](#6.4) <a name='6.5'></a> exists
 
-  + parseJSON
++ exists
 
-  Takes a well-formed JSON string and returns the resulting JavaScript value.
-
+  Check if an element exists in the DOM 
+  
   ```js
   // jQuery
-  $.parseJSON(str);
+  if ($('selector').length) {
+     // exists
+  }
 
   // Native
-  JSON.parse(str);
+  var element =  document.getElementById('elementId');
+  if (typeof(element) != 'undefined' && element != null) 
+  {
+     // exists
+  }
   ```
 
 **[⬆ back to top](#table-of-contents)**
@@ -1337,7 +1369,7 @@ A promise represents the eventual result of an asynchronous operation. jQuery ha
     elem.style.opacity = 0;
 
     if (ms) {
-      const opacity = 0;
+      let opacity = 0;
       const timer = setInterval(function() {
         opacity += 50 / ms;
         if (opacity >= 1) {
@@ -1350,7 +1382,7 @@ A promise represents the eventual result of an asynchronous operation. jQuery ha
       elem.style.opacity = 1;
     }
   }
-```
+  ```
 
 - [8.4](#8.4) <a name='8.4'></a> FadeTo
 
@@ -1412,8 +1444,7 @@ A promise represents the eventual result of an asynchronous operation. jQuery ha
   const { height } = el.ownerDocument.defaultView.getComputedStyle(el, null);
   if (parseInt(height, 10) === 0) {
     el.style.height = originHeight;
-  }
-  else {
+  } else {
    el.style.height = '0px';
   }
   ```

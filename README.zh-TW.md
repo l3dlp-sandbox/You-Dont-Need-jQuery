@@ -1,24 +1,25 @@
 ## You (Might) Don't Need jQuery [![Build Status](https://travis-ci.org/oneuijs/You-Dont-Need-jQuery.svg)](https://travis-ci.org/oneuijs/You-Dont-Need-jQuery)
 
-오늘날 프론트엔드 개발 환경은 급격히 진화하고 있고, 모던 브라우저들은 이미 충분히 많은 DOM/BOM API들을 구현했습니다. 우리는 jQuery를 DOM 처리나 이벤트를 위해 처음부터 배울 필요가 없습니다. React, Angular, Vue같은 프론트엔드 라이브러리들이 주도권을 차지하는 동안 DOM을 바로 처리하는 것은 안티패턴이 되었고, jQuery의 중요성은 줄어들었습니다. 이 프로젝트는 대부분의 jQuery 메소드의 대안을 IE 10 이상을 지원하는 네이티브 구현으로 소개합니다.
+當今的前端環境發展迅速，現代瀏覽器已經提供了夠好用的 DOM/BOM API，我們不需要為了 DOM 操作或事件處理而從頭開始學 jQuery。同時，由於 React、Angular 和 Vue 等前端框架的普及，直接操作 DOM 變成了反模式，jQuery 的使用性大幅減少。本專案概述了大部份 Javascript 替代 jQuery 的方式，支援 IE 10 以上。
 
-노트: jQuery는 여전히 훌륭한 라이브러리이며 많은 유즈 케이스를 갖고 있습니다. 원하지 않으신다면 마이그레이트하지 않으셔도됩니다.
+備註: jQuery 仍然是一個很棒的函式庫，有很多有效的案例。不用刻意為了變而改變 !
 
-## 목차
 
-1. [번역](#번역)
+## 目錄
+
+1. [Translations](#translations)
 1. [Query Selector](#query-selector)
 1. [CSS & Style](#css--style)
-1. [DOM 조작](#dom-조작)
+1. [DOM Manipulation](#dom-manipulation)
 1. [Ajax](#ajax)
-1. [이벤트](#이벤트)
-1. [유틸리티](#유틸리티)
+1. [Events](#events)
+1. [Utilities](#utilities)
 1. [Promises](#promises)
 1. [Animation](#animation)
-1. [대안방법](#대안방법)
-1. [브라우저 지원](#브라우저-지원)
+1. [Alternatives](#alternatives)
+1. [Browser Support](#browser-support)
 
-## 번역
+## Translations
 
 * [한국어](./README.ko-KR.md)
 * [正體中文](./README.zh-TW.md)
@@ -38,14 +39,14 @@
 
 ## Query Selector
 
-평범한 class, id, attribute같은 selector는 `document.querySelector`나 `document.querySelectorAll`으로 대체할 수 있습니다.
-* `document.querySelector`는 처음 매칭된 엘리먼트를 반환합니다.
-* `document.querySelectorAll`는 모든 매칭된 엘리먼트를 NodeList로 반환합니다. `Array.prototype.slice.call(document.querySelectorAll(selector));`을 사용해서 Array로 변환할 수 있습니다.
-* 만약 매칭된 엘리멘트가 없으면 jQuery와 `document.querySelectorAll`는 `[]` 를 반환하지만 `document.querySelector`는 `null`을 반환합니다.
+常見的 class、id、屬性等選擇器，我們可以使用 `document.querySelector` 或 `document.querySelectorAll` 替代。差別是
+* `document.querySelector` 返回第一個匹配的 Element
+* `document.querySelectorAll` 返回所有匹配的 Element 組成的 NodeList。它可以通過 `[].slice.call()` 轉換成 Array 使用
+* 如果匹配不到任何 Element，jQuery 和 `document.querySelectorAll` 將會返回 `[]`，但 `document.querySelector` 會返回 `null`。
 
-> 안내: `document.querySelector`와 `document.querySelectorAll`는 꽤 **느립니다**, `getElementById`나 `document.getElementsByClassName`, `document.getElementsByTagName`를 사용하면 퍼포먼스가 향상을 기대할 수 있습니다.
+> 注意：`document.querySelector` 和 `document.querySelectorAll` 效能**很差**。如果想提高效能，盡量使用 `document.getElementById`、`document.getElementsByClassName` 或 `document.getElementsByTagName`。
 
-- [1.0](#1.0) <a name='1.0'></a> selector로 찾기
+- [1.0](#1.0) <a name='1.0'></a> 選擇器查詢
 
   ```js
   // jQuery
@@ -55,7 +56,7 @@
   document.querySelectorAll('selector');
   ```
 
-- [1.1](#1.1) <a name='1.1'></a> class로 찾기
+- [1.1](#1.1) <a name='1.1'></a> class 查詢
 
   ```js
   // jQuery
@@ -64,11 +65,11 @@
   // Native
   document.querySelectorAll('.class');
 
-  // 또는
+  // 或
   document.getElementsByClassName('class');
   ```
 
-- [1.2](#1.2) <a name='1.2'></a> id로 찾기
+- [1.2](#1.2) <a name='1.2'></a> id 查詢
 
   ```js
   // jQuery
@@ -77,14 +78,11 @@
   // Native
   document.querySelector('#id');
 
-  // 또는
+  // 或
   document.getElementById('id');
-
-  // 또는
-  window['id']
   ```
 
-- [1.3](#1.3) <a name='1.3'></a> 속성(attribute)으로 찾기
+- [1.3](#1.3) <a name='1.3'></a> 屬性查詢
 
   ```js
   // jQuery
@@ -94,7 +92,7 @@
   document.querySelectorAll('a[target=_blank]');
   ```
 
-- [1.4](#1.4) <a name='1.4'></a> 자식에서 찾기
+- [1.4](#1.4) <a name='1.4'></a> 後代查詢
 
   ```js
   // jQuery
@@ -104,9 +102,9 @@
   el.querySelectorAll('li');
   ```
 
-- [1.5](#1.5) <a name='1.5'></a> 형제/이전/다음 엘리먼트 찾기
+- [1.5](#1.5) <a name='1.5'></a> 同層相鄰及前後元素
 
-  + 형제 엘리먼트
+  + 同層相鄰 (兄弟元素)
 
     ```js
     // jQuery
@@ -126,7 +124,7 @@
     );
     ```
 
-  + 이전 엘리먼트
+  + 同層前一個元素
 
     ```js
     // jQuery
@@ -134,46 +132,48 @@
 
     // Native
     el.previousElementSibling;
+
     ```
-  + 다음 엘리먼트
+
+  + 同層後一個元素
 
     ```js
-    // jQuery
+    // next
     $el.next();
 
     // Native
     el.nextElementSibling;
     ```
-
-  + 모든 이전 형제 엘리먼트
+    
+  + 所有同層裡之前的元素
 
     ```js
-    // jQuery (선택적 필터 셀렉터)
+    // jQuery (可選的過濾選擇器)
     $el.prevAll($filter);
 
-    // Native (선택적 필터 함수)
+    // Native (可選的過濾函式)
     function getPreviousSiblings(elem, filter) {
       var sibs = [];
       while (elem = elem.previousSibling) {
-          if (elem.nodeType === 3) continue; // 텍스트 노트 무시
+          if (elem.nodeType === 3) continue; // ignore text nodes
           if (!filter || filter(elem)) sibs.push(elem);
       }
       return sibs;
     }
 
-  + 모든 다음 형제 엘리먼트
+  + 所有同層裡之後的元素
 
     ```js
-    // jQuery (선택적 셀렉터 필터)
+    // jQuery (可選的過濾選擇器)
     $el.nextAll($filter);
 
-    // Native (선택적 필터 함수)
+    // Native (可選的過濾函式)
     function getNextSiblings(elem, filter) {
             var sibs = [];
             var nextElem = elem.parentNode.firstChild;
             do {
-                if (nextElem.nodeType === 3) continue; // 텍스트 노드 무시
-                if (nextElem === elem) continue; // 대상 elem 무시
+                if (nextElem.nodeType === 3) continue; // ignore text nodes
+                if (nextElem === elem) continue; // ignore elem of target
                 if (nextElem === elem.nextElementSibling) {
                     if (!filter || filter(elem)) {
                         sibs.push(nextElem);
@@ -183,8 +183,8 @@
             } while(nextElem = nextElem.nextSibling)
             return sibs;
         }
-
-필터 함수 예제:
+   
+一個篩選函式範例：
 
 ```js
 function exampleFilter(elem) {
@@ -201,16 +201,16 @@ function exampleFilter(elem) {
 
 - [1.6](#1.6) <a name='1.6'></a> Closest
 
-  현재 엘리먼트부터 document로 이동하면서 주어진 셀렉터와 일치하는 가장 가까운 엘리먼트를 반환합니다.
+  Closest 返回匹配選擇器的第一個父元素，從當前元素開始沿 DOM 樹向上遍尋。
 
   ```js
   // jQuery
-  $el.closest(selector);
+  $el.closest(queryString);
 
-  // Native - 최신 브라우저만, IE는 미지원
-   el.closest(selector);
+  // Native - 只支援最新版本，NO IE
+  el.closest(selector);
 
-  // Native - IE10 이상
+  // Native - IE10+
   function closest(el, selector) {
     const matchesSelector = el.matches || el.webkitMatchesSelector || el.mozMatchesSelector || el.msMatchesSelector;
 
@@ -227,7 +227,7 @@ function exampleFilter(elem) {
 
 - [1.7](#1.7) <a name='1.7'></a> Parents Until
 
-  주어진 셀렉터에 매칭되는 엘리먼트를 찾기까지 부모 태그들을 위로 올라가며 탐색하여 저장해두었다가 DOM 노드 또는 jQuery object로 반환합니다.
+  獲取當前每一個匹配元素的祖先們，不包含匹配元素本身，DOM node 或 jQuery 物件。
 
   ```js
   // jQuery
@@ -238,7 +238,7 @@ function exampleFilter(elem) {
     const result = [];
     const matchesSelector = el.matches || el.webkitMatchesSelector || el.mozMatchesSelector || el.msMatchesSelector;
 
-    // match start from parent
+    // 從父母開始匹配
     el = el.parentElement;
     while (el && !matchesSelector.call(el, selector)) {
       if (!filter) {
@@ -254,9 +254,9 @@ function exampleFilter(elem) {
   }
   ```
 
-- [1.8](#1.8) <a name='1.8'></a> Form
+- [1.8](#1.8) <a name='1.8'></a> Form 表單
 
-  + Input/Textarea
+  + Input / Textarea 輸入欄位
 
     ```js
     // jQuery
@@ -266,21 +266,21 @@ function exampleFilter(elem) {
     document.querySelector('#my-input').value;
     ```
 
-  + e.currentTarget이 몇 번째 `.radio` 인지 구하기
+  + 獲取 e.currentTarget 在 `.radio` 中的索引值
 
     ```js
     // jQuery
-    $(e.currentTarget).index('.radio');
+    $('.radio').index(e.currentTarget);
 
     // Native
     Array.from(document.querySelectorAll('.radio')).indexOf(e.currentTarget);
-    또는
+    or
     Array.prototype.indexOf.call(document.querySelectorAll('.radio'), e.currentTarget);
     ```
 
 - [1.9](#1.9) <a name='1.9'></a> Iframe Contents
 
-  `$('iframe').contents()`는 iframe에 한정해서 `contentDocument`를 반환합니다.
+  `$('iframe').contents()` 在 jQuery 返回的是 iframe 内的 `document`
 
   + Iframe contents
 
@@ -292,7 +292,7 @@ function exampleFilter(elem) {
     iframe.contentDocument;
     ```
 
-  + Iframe에서 찾기
+  + Iframe Query
 
     ```js
     // jQuery
@@ -302,7 +302,7 @@ function exampleFilter(elem) {
     iframe.contentDocument.querySelectorAll('.css');
     ```
 
-- [1.10](#1.10) <a name='1.10'></a> body 얻기
+- [1.10](#1.10) <a name='1.10'></a> 獲取 body
 
   ```js
   // jQuery
@@ -312,9 +312,9 @@ function exampleFilter(elem) {
   document.body;
   ```
 
-- [1.11](#1.11) <a name='1.11'></a> 속성 얻기 및 설정
+- [1.11](#1.11) <a name='1.11'></a> 獲取或設置屬性
 
-  + 속성 얻기
+  + 獲取屬性
 
     ```js
     // jQuery
@@ -323,30 +323,30 @@ function exampleFilter(elem) {
     // Native
     el.getAttribute('foo');
     ```
-  + 속성 설정하기
+  + 設置屬性
 
     ```js
-    // jQuery, DOM 변형 없이 메모리에서 작동됩니다.
+    // jQuery, 請注意，這可以在記憶體中工作，無需更改 DOM
     $el.attr('foo', 'bar');
 
     // Native
     el.setAttribute('foo', 'bar');
     ```
 
-  + `data-` 속성 얻기
+  + 獲取 `data-` 屬性
 
     ```js
     // jQuery
     $el.data('foo');
 
-    // Native (`getAttribute` 사용)
+    // Native (使用 `getAttribute`)
     el.getAttribute('data-foo');
 
-    // Native (IE 11 이상의 지원만 필요하다면 `dataset`을 사용)
+    // Native (如果只需要支援 IE 11 以上，可以使用 `dataset`)
     el.dataset['foo'];
     ```
-
-- [1.12](#1.12) <a name='1.12'></a> 문자열을 포함하는 셀렉터(대소문자 구분)
+    
+- [1.12](#1.12) <a name='1.12'></a> 包含字串的選擇器 (區分大小寫)
 
     ```js
     // jQuery
@@ -359,44 +359,43 @@ function exampleFilter(elem) {
         return RegExp(text).test(element.textContent);
       });
     }
-    ```
+    ```   
 
-**[⬆ 목차로 돌아가기](#목차)**
+**[⬆ 回到頂部](#目錄)**
 
 ## CSS & Style
 
 - [2.1](#2.1) <a name='2.1'></a> CSS
 
-  + style값 얻기
+  + 獲取樣式
 
     ```js
     // jQuery
     $el.css("color");
 
     // Native
-    // NOTE: 알려진 버그로, style값이 'auto'이면 'auto'를 반환합니다.
+    // 注意: 已知問題，如果樣式的值為 'auto'，將會返回 'auto'
     const win = el.ownerDocument.defaultView;
 
-    // null은 가상 스타일은 반환하지 않음을 의미합니다.
+    // null 意指不返回偽樣式
     win.getComputedStyle(el, null).color;
     ```
 
-  + style값 설정하기
+  + 設置樣式
 
     ```js
     // jQuery
-    $el.css({ color: '#f01' });
+    $el.css({ color: "#ff0011" });
 
     // Native
-    el.style.color = '#f01';
+    el.style.color = '#ff0011';
     ```
 
-  + Style값들을 동시에 얻거나 설정하기
+  + 獲取 / 設置樣式
 
-    만약 한번에 여러 style값을 바꾸고 싶다면 oui-dom-utils 패키지의 [setStyles](https://github.com/oneuijs/oui-dom-utils/blob/master/src/index.js#L194)를 사용해보세요.
+    注意：如果想一次設置多個樣式，可以參考 oui-dom-utils 裡 [setStyles](https://github.com/oneuijs/oui-dom-utils/blob/master/src/index.js#L194) 的方法
 
-
-  + class 추가하기
+  + add class
 
     ```js
     // jQuery
@@ -406,7 +405,7 @@ function exampleFilter(elem) {
     el.classList.add(className);
     ```
 
-  + class 제거하기
+  + remove class
 
     ```js
     // jQuery
@@ -416,7 +415,7 @@ function exampleFilter(elem) {
     el.classList.remove(className);
     ```
 
-  + class를 포함하고 있는지 검사하기
+  + has class
 
     ```js
     // jQuery
@@ -426,7 +425,7 @@ function exampleFilter(elem) {
     el.classList.contains(className);
     ```
 
-  + class 토글하기
+  + Toggle class
 
     ```js
     // jQuery
@@ -436,24 +435,24 @@ function exampleFilter(elem) {
     el.classList.toggle(className);
     ```
 
-- [2.2](#2.2) <a name='2.2'></a> 폭과 높이
+- [2.2](#2.2) <a name='2.2'></a> Width & Height
 
-  폭과 높이는 이론상 동일합니다. 높이로 예를 들겠습니다.
+  Width 與 Height 獲取方式相同，下面以 Height 為例：
 
-  + Window의 높이
+  + Window height
 
     ```js
-    // window 높이
+    // window height
     $(window).height();
 
-    // jQuery처럼 스크롤바를 제외하기
+    // 有捲軸
     window.document.documentElement.clientHeight;
 
-    // 스크롤바 포함
+    // 沒有捲軸，行為像 jQuery
     window.innerHeight;
     ```
 
-  + 문서 높이
+  + Document height
 
     ```js
     // jQuery
@@ -471,7 +470,7 @@ function exampleFilter(elem) {
     );
     ```
 
-  + Element 높이
+  + Element height
 
     ```js
     // jQuery
@@ -479,7 +478,7 @@ function exampleFilter(elem) {
 
     // Native
     function getHeight(el) {
-      const styles = window.getComputedStyle(el);
+      const styles = this.getComputedStyle(el);
       const height = el.offsetHeight;
       const borderTopWidth = parseFloat(styles.borderTopWidth);
       const borderBottomWidth = parseFloat(styles.borderBottomWidth);
@@ -488,10 +487,10 @@ function exampleFilter(elem) {
       return height - borderBottomWidth - borderTopWidth - paddingTop - paddingBottom;
     }
 
-    // 정수로 정확하게（`border-box`일 때 이 값은 `height - border`이고, `content-box`일 때, 이 값은 `height + padding`）
+    // 精準到整數（當 `border-box` 時為 `height - border` 值；當 `content-box` 時為 `height + padding` 值）
     el.clientHeight;
 
-    // 실수로 정확하게（`border-box`일 때 이 값은 `height`이고, `content-box`일 때, 이 값은 `height + padding + border`）
+    // 精準到小數（當 `border-box` 時為 `height` 值；當 `content-box` 時為 `height + padding + border` 值）
     el.getBoundingClientRect().height;
     ```
 
@@ -499,7 +498,7 @@ function exampleFilter(elem) {
 
   + Position
 
-    오프셋 부모를 기준으로 엘리먼트의 현재 위치를 얻습니다.
+    獲得匹配元素相對於父元素的坐標
 
     ```js
     // jQuery
@@ -511,7 +510,7 @@ function exampleFilter(elem) {
 
   + Offset
 
-    다큐먼트를 기준으로 엘리먼트의 현재 위치를 얻습니다.
+    獲得匹配元素相對於文件的坐標
 
     ```js
     // jQuery
@@ -524,13 +523,14 @@ function exampleFilter(elem) {
       return {
         top: box.top + window.pageYOffset - document.documentElement.clientTop,
         left: box.left + window.pageXOffset - document.documentElement.clientLeft
-      };
+      }
     }
     ```
 
 - [2.4](#2.4) <a name='2.4'></a> Scroll Top
 
-  엘리먼트에대한 스크롤바의 현재 수직 위치를 얻습니다.
+
+  獲取元素滾動條的當前垂直位置。
 
   ```js
   // jQuery
@@ -540,13 +540,13 @@ function exampleFilter(elem) {
   (document.documentElement && document.documentElement.scrollTop) || document.body.scrollTop;
   ```
 
-**[⬆ 목차로 돌아가기](#목차)**
+**[⬆ 回到頂部](#目錄)**
 
-## DOM 조작
+## DOM Manipulation
 
-- [3.1](#3.1) <a name='3.1'></a> 제거
+- [3.1](#3.1) <a name='3.1'></a> Remove
 
-  DOM으로부터 엘리먼트를 제거합니다.
+  從 DOM 中移除元素。
 
   ```js
   // jQuery
@@ -558,9 +558,9 @@ function exampleFilter(elem) {
 
 - [3.2](#3.2) <a name='3.2'></a> Text
 
-  + text 가져오기
+  + Get text
 
-    자손을 포함하는 엘리먼트의 결합된 텍스트 컨텐츠를 얻습니다.
+    返回元素的文本內容，包含其後代。
 
     ```js
     // jQuery
@@ -570,10 +570,10 @@ function exampleFilter(elem) {
     el.textContent;
     ```
 
-  + text 설정하기
+  + Set text
 
-    엘리먼트의 컨텐츠를 지정한 텍스트로 설정합니다.
-  
+    設置元素的文本內容。
+
     ```js
     // jQuery
     $el.text(string);
@@ -584,7 +584,7 @@ function exampleFilter(elem) {
 
 - [3.3](#3.3) <a name='3.3'></a> HTML
 
-  + HTML 가져오기
+  + Get HTML
 
     ```js
     // jQuery
@@ -594,7 +594,7 @@ function exampleFilter(elem) {
     el.innerHTML;
     ```
 
-  + HTML 설정하기
+  + Set HTML
 
     ```js
     // jQuery
@@ -604,67 +604,65 @@ function exampleFilter(elem) {
     el.innerHTML = htmlString;
     ```
 
-- [3.4](#3.4) <a name='3.4'></a> 해당 엘리먼트의 자식들 뒤에 넣기(Append)
+- [3.4](#3.4) <a name='3.4'></a> Append
 
-  부모 엘리먼트의 마지막 자식 다음으로 엘리먼트를 추가합니다.
-
-  ```js
-  // jQuery: DOMString과 Node 객체를 위한 통합된 구문
-  $parent.append(newEl | '<div id="container">Hello World</div>');
-
-  // Native: 다른 구문
-  parent.insertAdjacentHTML('beforeend', '<div id="container">Hello World</div>');
-  parent.appendChild(newEl);
-
-  // Native (ES6 방식): 통합된 구문
-  parent.append(newEl | '<div id="container">Hello World</div>');
-  ```
-
-- [3.5](#3.5) <a name='3.5'></a> 해당 엘리먼트의 자식들 앞에 넣기(Prepend)
-
-  ```js
-  // jQuery: DOMString과 Node 객체를 위한 통합된 구문
-  $parent.prepend(newEl | '<div id="container">Hello World</div>');
-
-  // Native: 다른 구문
-  parent.insertAdjacentHTML('afterbegin', '<div id="container">Hello World</div>');
-  parent.insertBefore(newEl, parent.firstChild);
-  
-  // Native (ES6 방식): 통합된 구문
-  parent.prepend(newEl | '<div id="container">Hello World</div>');
-  ```
-
-- [3.6](#3.6) <a name='3.6'></a> 해당 엘리먼트 앞에 넣기(insertBefore)
-
-  새 노드를 선택한 엘리먼트 앞에 넣습니다.
+  Append 在父元素的最後一個子元素後追加子元素
 
   ```js
   // jQuery
-  $newEl.insertBefore(selector);
+  $el.append("<div id='container'>hello</div>");
 
-  // Native (HTML 문자열)
-  el.insertAdjacentHTML('beforebegin', '<div id="container">Hello World</div>');
+  // Native (HTML 字串)
+  el.insertAdjacentHTML('beforeend', '<div id="container">Hello World</div>');
 
-  // Native (엘리먼트)
+  // Native (元素)
+  el.appendChild(newEl);
+  ```
+
+- [3.5](#3.5) <a name='3.5'></a> Prepend
+
+  ```js
+  // jQuery
+  $el.prepend("<div id='container'>hello</div>");
+
+  // Native (HTML 字串)
+  el.insertAdjacentHTML('afterbegin', '<div id="container">Hello World</div>');
+
+  // Native (元素)
+  el.insertBefore(newEl, el.firstChild);
+  ```
+
+- [3.6](#3.6) <a name='3.6'></a> insertBefore
+
+  在選取的元素前插入新節點
+
+  ```js
+  // jQuery
+  $newEl.insertBefore(queryString);
+
+  // Native (HTML 字串)
+  el.insertAdjacentHTML('beforebegin ', '<div id="container">Hello World</div>');
+
+  // Native (元素)
   const el = document.querySelector(selector);
   if (el.parentNode) {
     el.parentNode.insertBefore(newEl, el);
   }
   ```
 
-- [3.7](#3.7) <a name='3.7'></a> 해당 엘리먼트 뒤에 넣기(insertAfter)
+- [3.7](#3.7) <a name='3.7'></a> insertAfter
 
-  새 노드를 선택한 엘리먼트 뒤에 넣습니다.
+  在選取的元素插入新節點
 
   ```js
   // jQuery
-  $newEl.insertAfter(selector);
+  $newEl.insertAfter(queryString);
 
-  // Native (HTML 문자열)
+  // Native (HTML 字串)
   el.insertAdjacentHTML('afterend', '<div id="container">Hello World</div>');
 
-  // Native (엘리먼트)
-  onst el = document.querySelector(selector);
+  // Native (元素)
+  const el = document.querySelector(selector);
   if (el.parentNode) {
     el.parentNode.insertBefore(newEl, el.nextSibling);
   }
@@ -672,61 +670,62 @@ function exampleFilter(elem) {
 
 - [3.8](#3.8) <a name='3.8'></a> is
 
-  query selector와 일치하면 `true` 를 반환합니다.
+  如果匹配 query selector，返回 `true`
 
-  ```js
-  // jQuery - `is`는 함수, 존재하는 jQuery 객체 또는 여기에서 언급하지 않은 DOM 엘리먼트와도 동작함을 알립니다.
-  $el.is(selector);
+    ```js
+    // jQuery
+    $el.is(selector);
 
-  // Native
-  el.matches(selector);
-  ```
+    // Native
+    el.matches(selector);
+    ```
+
 - [3.9](#3.9) <a name='3.9'></a> clone
 
-  엘리먼트의 깊은 복사본을 생성합니다. 일치한 엘리먼트를 포함해 그 자손 노드와 텍스트 노드를 모두 복사합니다.
+  創造一個深拷貝元素：此拷貝包含匹配元素及其所有後代元素和文本節點。
 
   ```js
-  // jQuery. 이벤트 핸들러가 엘리먼트와 함께 복사되어야함을 알리려면 파라미터를 `true`로 설정하세요.
+  // jQuery. 將參數設為 `true` 以表示應將事件處理程序與元素一起複製。
   $el.clone();
 
   // Native
   el.cloneNode();
-
   ```
 
 - [3.10](#3.10) <a name='3.10'></a> empty
 
-  모든 자식 노드를 제거합니다.
+  移除所有子節點
 
-  ```js
-  // jQuery
-  $el.empty();
+```js
+// jQuery
+$el.empty();
 
-  // Native
-  el.innerHTML = null;
-  ```
+// Native
+el.innerHTML = '';
+```
 
 - [3.11](#3.11) <a name='3.11'></a> wrap
 
-  각각의 엘리먼트를 주어진 HTML 구조로 감쌉니다.
+ 把每個被選取的元素放到指定的 HTML 結構裡
 
-  ```js
-  // jQuery
-  $('.inner').wrap('<div class="wrapper"></div>');
+ ```js
+ // jQuery
+ $(".inner").wrap('<div class="wrapper"></div>');
 
-  // Native
-  Array.from(document.querySelectorAll('.inner')).forEach((el) => {
+ // Native
+ Array.from(document.querySelectorAll('.inner')).forEach((el) => {
     const wrapper = document.createElement('div');
     wrapper.className = 'wrapper';
     el.parentNode.insertBefore(wrapper, el);
     el.parentNode.removeChild(el);
     wrapper.appendChild(el);
-  });
-  ```
+ });
 
-- [3.12](#3.12) <a name='3.12'></a> unwrap
+ ```
 
-  DOM에서 해당 엘리먼트를 감싸고 있는 부모 요소를 없앱니다.
+- [3.12](#3.12) <a name="3.12"></a> unwrap
+
+  從 DOM 結構移除匹配元素的父元素
 
   ```js
   // jQuery
@@ -734,24 +733,24 @@ function exampleFilter(elem) {
 
   // Native
   Array.from(document.querySelectorAll('.inner')).forEach((el) => {
-    let elParentNode = el.parentNode;
+    let elParentNode = el.parentNode
 
     if(elParentNode !== document.body) {
-        elParentNode.parentNode.insertBefore(el, elParentNode);
-        elParentNode.parentNode.removeChild(elParentNode);
+      elParentNode.parentNode.insertBefore(el, elParentNode)
+      elParentNode.parentNode.removeChild(elParentNode)
     }
   });
   ```
 
-- [3.13](#3.13) <a name='3.13'></a> replaceWith
+- [3.13](#3.13) <a name="3.13"></a> replaceWith
 
-  각각의 엘리먼트를 주어진 새 엘리먼트로 교체합니다.
+  用提供的新內容取代任何匹配元素集中的每個元素
 
   ```js
   // jQuery
   $('.inner').replaceWith('<div class="outer"></div>');
-
-  // Native (대안) - 최신, Edge17+
+  
+  // Native (方案一) - 最新版或 Edge17+
   Array.from(document.querySelectorAll('.inner')).forEach((el) => {
     const outer = document.createElement('div');
     outer.className = 'outer';
@@ -760,51 +759,50 @@ function exampleFilter(elem) {
 
   // Native
   Array.from(document.querySelectorAll('.inner')).forEach((el) => {
-    const outer = document.createElement('div');
-    outer.className = 'outer';
+    const outer = document.createElement("div");
+    outer.className = "outer";
     el.parentNode.replaceChild(outer, el);
   });
   ```
 
-  - [3.14](#3.14) <a name='3.14'></a> 간단한 파싱
+- [3.14](#3.14) <a name='3.14'></a> simple parse
 
-    문자열을 HTML/SVG/XML 로 파싱합니다.
+  解析 HTML / SVG / XML 字串
 
-    ```js
-    // jQuery
-    $(`<ol>
-      <li>a</li>
-      <li>b</li>
-    </ol>
-    <ol>
-      <li>c</li>
-      <li>d</li>
-    </ol>`);
+  ```js
+  // jQuery
+  $(`<ol>
+    <li>a</li>
+    <li>b</li>
+  </ol>
+  <ol>
+    <li>c</li>
+    <li>d</li>
+  </ol>`);
 
-    // Native
-    range = document.createRange();
-    parse = range.createContextualFragment.bind(range);
+  // Native
+  range = document.createRange();
+  parse = range.createContextualFragment.bind(range);
 
-    parse(`<ol>
-      <li>a</li>
-      <li>b</li>
-    </ol>
-    <ol>
-      <li>c</li>
-      <li>d</li>
-    </ol>`);
-    ```
+  parse(`<ol>
+    <li>a</li>
+    <li>b</li>
+  </ol>
+  <ol>
+    <li>c</li>
+    <li>d</li>
+  </ol>`);
+  ```
 
-
-**[⬆ 목차로 돌아가기](#목차)**
+**[⬆ 回到頂部](#目錄)**
 
 ## Ajax
 
-[Fetch API](https://fetch.spec.whatwg.org/) 는 XMLHttpRequest를 ajax로 대체하는 새로운 표준 입니다. Chrome과 Firefox에서 작동하며, polyfill을 이용해서 구형 브라우저에서 작동되도록 만들 수도 있습니다.
+[Fetch API](https://fetch.spec.whatwg.org/) 是一個用是來替換 XMLHttpRequest 執行 ajax 的新標準。適用於 Chrome 和 Firefox，你可以使用 polyfill 讓它在舊版瀏覽器上運行。。
 
-IE9 이상에서 지원하는 [github/fetch](http://github.com/github/fetch) 혹은 IE8 이상에서 지원하는 [fetch-ie8](https://github.com/camsong/fetch-ie8/), JSONP 요청을 만드는 [fetch-jsonp](https://github.com/camsong/fetch-jsonp)를 이용해보세요.
+IE9+ 請使用 [github/fetch](http://github.com/github/fetch)，IE8+ 請使用 [fetch-ie8](https://github.com/camsong/fetch-ie8/)，JSONP 請使用 [fetch-jsonp](https://github.com/camsong/fetch-jsonp)。
 
-- [4.1](#4.1) <a name='4.1'></a> 서버로부터 HTML data를 불러와서 매칭된 엘리먼트에 배치.
+- [4.1](#4.1) <a name='4.1'></a> 從伺服器載入數據並將返回的 HTML 放入匹配的元素中。
 
   ```js
   // jQuery
@@ -816,20 +814,20 @@ IE9 이상에서 지원하는 [github/fetch](http://github.com/github/fetch) 혹
   }).then(completeCallback)
   ```
 
-**[⬆ 목차로 돌아가기](#목차)**
+**[⬆ 回到頂部](#目錄)**
 
-## 이벤트
+## Events
 
-namespace와 delegation을 포함해서 완전히 갈아 엎길 원하시면 https://github.com/oneuijs/oui-dom-events 를 고려해보세요.
+完整的替代命名空間及事件處理，請參考 https://github.com/oneuijs/oui-dom-events
 
-- [5.0](#5.0) <a name='5.0'></a> `DOMContentLoaded`가 되어 문서가 사용 가능한지
+- [5.0](#5.0) <a name='5.0'></a> Document ready by `DOMContentLoaded`
 
   ```js
   // jQuery
   $(document).ready(eventHandler);
 
   // Native
-  // DOMContentLoaded가 이미 완료되었는지를 확인
+  // 檢查 DOMContentLoaded 是否已經完成
   if (document.readyState !== 'loading') {
     eventHandler();
   } else {
@@ -837,7 +835,7 @@ namespace와 delegation을 포함해서 완전히 갈아 엎길 원하시면 htt
   }
   ```
 
-- [5.1](#5.1) <a name='5.1'></a> 이벤트 Bind 걸기
+- [5.1](#5.1) <a name='5.1'></a> 使用 on 綁定事件
 
   ```js
   // jQuery
@@ -847,7 +845,7 @@ namespace와 delegation을 포함해서 완전히 갈아 엎길 원하시면 htt
   el.addEventListener(eventName, eventHandler);
   ```
 
-- [5.2](#5.2) <a name='5.2'></a> 이벤트 Bind 풀기
+- [5.2](#5.2) <a name='5.2'></a> 使用 off 綁定事件
 
   ```js
   // jQuery
@@ -857,7 +855,7 @@ namespace와 delegation을 포함해서 완전히 갈아 엎길 원하시면 htt
   el.removeEventListener(eventName, eventHandler);
   ```
 
-- [5.3](#5.3) <a name='5.3'></a> 이벤트 발생시키기(Trigger)
+- [5.3](#5.3) <a name='5.3'></a> Trigger
 
   ```js
   // jQuery
@@ -874,17 +872,17 @@ namespace와 delegation을 포함해서 완전히 갈아 엎길 원하시면 htt
   el.dispatchEvent(event);
   ```
 
-**[⬆ 목차로 돌아가기](#목차)**
+**[⬆ 回到頂部](#目錄)**
 
-## 유틸리티
+## Utilities
 
-대부분의 jQuery 유틸은 네이티브 API에서도 찾을 수 있습니다. 다른 향상된 기능들은 지속성과 성능에 중점을 둔 더 나은 유틸 라이브러리로부터 선택할 수 있습니다. 권장하는 대안은 [Lodash](https://lodash.com)입니다.
+大部份的 jQuery 實用工具都能在 native API 中找到。其它進階功能可以選用專注於穩定及效能的優質工具庫，推薦 [lodash](https://lodash.com)。
 
-- [6.1](#6.1) <a name='6.1'></a> 기본 유틸리티
+- [6.1](#6.1) <a name='6.1'></a> 基本工具
 
   + isArray
 
-  주어진 인자가 배열인지 검사합니다.
+  判斷參數是否為陣列。
 
   ```js
   // jQuery
@@ -896,7 +894,7 @@ namespace와 delegation을 포함해서 완전히 갈아 엎길 원하시면 htt
 
   + isWindow
 
-  주어진 인자가 window 객체인지 검사합니다.
+  判斷參數是否為 window
 
   ```js
   // jQuery
@@ -910,7 +908,7 @@ namespace와 delegation을 포함해서 완전히 갈아 엎길 원하시면 htt
 
   + inArray
 
-  배열에서 해당 값이 있는지 검색하고 해당 값의 순번을 반환합니다. (검색 결과가 없을 경우 -1을 반환)
+  在陣列中搜尋指定值並返回索引值 (找不到則返回 -1)。
 
   ```js
   // jQuery
@@ -919,14 +917,14 @@ namespace와 delegation을 포함해서 완전히 갈아 엎길 원하시면 htt
   // Native
   array.indexOf(item) > -1;
 
-  // ES6 방식
+  // ES6-way
   array.includes(item);
   ```
 
   + isNumeric
 
-  주어진 인자가 숫자인지 검사합니다.
-  검사에 `typeof` 를 사용합니다. 필요하면 라이브러리를 사용하세요. 가끔 `typeof`는 정확하지 않습니다.
+  判斷傳入的參數是否為數字。
+  為了更好的準確性，請使用 `typeof` 確定型別，或參考下方 `type` 範例。
 
   ```js
   // jQuery
@@ -940,7 +938,7 @@ namespace와 delegation을 포함해서 완전히 갈아 엎길 원하시면 htt
 
   + isFunction
 
-  주어진 인자가 JavaScript 함수 객체인지 검사합니다.
+  判斷傳入的參數是否為 Javascript 函式。
 
   ```js
   // jQuery
@@ -951,14 +949,14 @@ namespace와 delegation을 포함해서 완전히 갈아 엎길 원하시면 htt
     if (typeof item === 'function') {
       return true;
     }
-    var type = Object.prototype.toString(item);
+    var type = Object.prototype.toString.call(item);
     return type === '[object Function]' || type === '[object GeneratorFunction]';
   }
   ```
 
   + isEmptyObject
 
-  객체가 비어있는지 검사합니다. Check to see if an object is empty (열거할 수 있는 프로퍼티가 없는지 검사).
+  檢測物件是否為空值 (包含不可枚舉的屬性)
 
   ```js
   // jQuery
@@ -972,7 +970,7 @@ namespace와 delegation을 포함해서 완전히 갈아 엎길 원하시면 htt
 
   + isPlainObject
 
-  주어진 객체가 평범한 객체인지 검사합니다. (“{}”이나 “new Object”으로 생성되었는지 검사)
+  檢測物件是否為純對象 (使用 “{}” 或 “new Object” 創建)
 
   ```js
   // jQuery
@@ -995,20 +993,20 @@ namespace와 delegation을 포함해서 완전히 갈아 엎길 원하시면 htt
 
   + extend
 
-  두 개 이상의 객체를 첫 번째 객체로 합칩니다.
-  object.assign 은 ES6 API입니다. [polyfill](https://github.com/ljharb/object.assign) 을 사용할 수 있습니다.
+  將二個或多個物件的內容合併到一個新物件中，且不修改任一個參數。
+  object.assign 是 ES6 API，你也可以使用 [polyfill](https://github.com/ljharb/object.assign)。
 
   ```js
   // jQuery
-  $.extend({}, defaultOpts, opts);
+  $.extend({}, object1, object2);
 
   // Native
-  Object.assign({}, defaultOpts, opts);
+  Object.assign({}, object1, object2);
   ```
 
   + trim
 
-  문자열 앞뒤에 붙은 공백문자를 제거합니다.
+  刪除字串開頭和結尾的空白。
 
   ```js
   // jQuery
@@ -1020,7 +1018,7 @@ namespace와 delegation을 포함해서 완전히 갈아 엎길 원하시면 htt
 
   + map
 
-  배열이나 객체 내의 모든 요소를 새 배열에 변환하여 저장합니다.
+  將陣列或物件裡的所有項目轉換為新的陣列項目。
 
   ```js
   // jQuery
@@ -1034,7 +1032,7 @@ namespace와 delegation을 포함해서 완전히 갈아 엎길 원하시면 htt
 
   + each
 
-  객체나 함수 모두에 매끄럽게 사용할 수 있는 포괄적인 용도의 반복 함수입니다.
+  通用迭代函式，可用於無縫迭代物件或陣列。
 
   ```js
   // jQuery
@@ -1048,7 +1046,7 @@ namespace와 delegation을 포함해서 완전히 갈아 엎길 원하시면 htt
 
   + grep
 
-  배열에서 필터 함수를 만족하는 엘리먼트를 찾습니다.
+  找到陣列中符合過濾函式的元素。
 
   ```js
   // jQuery
@@ -1062,7 +1060,7 @@ namespace와 delegation을 포함해서 완전히 갈아 엎길 원하시면 htt
 
   + type
 
-  객체의 JavaScript 내부 [[Class]]를 검사합니다.
+  檢測物件中的 JavaScript [Class] 內部型態。
 
   ```js
   // jQuery
@@ -1079,21 +1077,21 @@ namespace와 delegation을 포함해서 완전히 갈아 엎길 원하시면 htt
 
   + merge
 
-  두 배열을 첫 번째 배열로 합칩니다.
+  將二個陣列的內容合併到第一個陣列裡。
 
   ```js
-  // jQuery, 중복된 항목을 제거하지 않습니다
+  // jQuery, 不會刪除重複的項目
   $.merge(array1, array2);
 
-  // Native, 중복된 항목을 제거하지 않습니다
+  // Native, 不會刪除重複的項目
   function merge(...args) {
     return [].concat(...args)
   }
 
-  // ES6 방식, 중복된 항목을 제거하지 않습니다
+  // ES6-way, 不會刪除重複的項目
   array1 = [...array1, ...array2]
 
-  // Set 버전, 중복된 항목을 제거합니다
+  // Set version, 不會刪除重複的項目
   function merge(...args) {
     return Array.from(new Set([].concat(...args)))
   }
@@ -1101,7 +1099,7 @@ namespace와 delegation을 포함해서 완전히 갈아 엎길 원하시면 htt
 
   + now
 
-  현재 시간을 숫자로 반환합니다.
+  返回表示當前時間的數字。
 
   ```js
   // jQuery
@@ -1113,7 +1111,7 @@ namespace와 delegation을 포함해서 완전히 갈아 엎길 원하시면 htt
 
   + proxy
 
-  함수를 받아서 언제나 특정 context를 갖는 새 함수를 반환합니다.
+  傳入一個函式並返回一個新的函式，該函式綁定指定的上下文。
 
   ```js
   // jQuery
@@ -1125,7 +1123,7 @@ namespace와 delegation을 포함해서 완전히 갈아 엎길 원하시면 htt
 
   <a name="makeArray"></a>+ makeArray
 
-  array-like 한 객체를 진짜 JavaScript 배열로 변환합니다.
+  將類似陣列的物件轉換為真正的 JavaScript 陣列。
 
   ```js
   // jQuery
@@ -1134,16 +1132,16 @@ namespace와 delegation을 포함해서 완전히 갈아 엎길 원하시면 htt
   // Native
   Array.prototype.slice.call(arrayLike);
 
-  // ES6 방식: Array.from() 메소드
+  // ES6-way: Array.from() method
   Array.from(arrayLike);
 
-  // ES6 방식: spread 연산자
+  // ES6-way: spread operator 展開運算式
   [...arrayLike];
   ```
 
 - [6.2](#6.2) <a name='6.2'></a> Contains
 
-  주어진 엘리먼트가 주어진 또 다른 엘리먼트를 자손으로 포함하는지 검사합니다.
+  檢查 DOM 元素是否為其它 DOM 元素的後代。
 
   ```js
   // jQuery
@@ -1155,7 +1153,7 @@ namespace와 delegation을 포함해서 완전히 갈아 엎길 원하시면 htt
 
 - [6.3](#6.3) <a name='6.3'></a> Globaleval
 
-  JavaScript 코드를 전역적으로 실행합니다.
+  執行一些 JavaScript 的全域域代碼。
 
   ```js
   // jQuery
@@ -1169,7 +1167,7 @@ namespace와 delegation을 포함해서 완전히 갈아 엎길 원하시면 htt
     document.head.appendChild(script).parentNode.removeChild(script);
   }
 
-  // eval 함수를 쓸 수도 있습니다. 하지만 $.Globaleval 의 context가 전역인 데 반해 eval 함수의 context 는 실행 영역입니다.
+  // 使用 eval，但 eval 的上下文是當前的，而 $.Globaleval 的上下文是 global 全域的。
   eval(code);
   ```
 
@@ -1177,7 +1175,7 @@ namespace와 delegation을 포함해서 완전히 갈아 엎길 원하시면 htt
 
   + parseHTML
 
-  문자열을 DOM 노드의 배열로 변환합니다.
+  將字串解析為 DOM nodes 陣列。
 
   ```js
   // jQuery
@@ -1187,7 +1185,8 @@ namespace와 delegation을 포함해서 완전히 갈아 엎길 원하시면 htt
   function parseHTML(string) {
     const context = document.implementation.createHTMLDocument();
 
-    // 생성된 도큐먼트를 위해 base href를 지정해서 URL이 있는 엘리먼트들은 도큐먼트 기준으로 처리됩니다.
+    // Set the base href for the created document so any parsed elements with URLs
+    // are based on the document's URL
     const base = context.createElement('base');
     base.href = document.location.href;
     context.head.appendChild(base);
@@ -1196,36 +1195,35 @@ namespace와 delegation을 포함해서 완전히 갈아 엎길 원하시면 htt
     return context.body.children;
   }
   ```
-
 - [6.5](#6.4) <a name='6.5'></a> exists
 
 + exists
 
-  엘리먼트가 DOM에 존재하는지를 확인합니다
+  檢查元素是否存在於 DOM 裡。
   
   ```js
   // jQuery
   if ($('selector').length) {
-     // 존재함
+     // exists
   }
 
   // Native
   var element =  document.getElementById('elementId');
   if (typeof(element) != 'undefined' && element != null) 
   {
-     // 존재함
+     // exists
   }
   ```
 
-**[⬆ 목차로 돌아가기](#목차)**
+**[⬆ 回到頂部](#目錄)**
 
 ## Promises
 
-Promise는 비동기적인 작업의 결과를 표현합니다. jQuery는 자체적인 promise 처리를 가지고 있습니다. 네이티브 JavaScript엔 [Promises/A+](http://promises-aplus.github.io/promises-spec/) 명세에 맞는 얇고 작은 API를 구현되어 있습니다.
+promise 表示異步操作的最終結果。 jQuery 用它自己的方式來處理 promises。原生 JavaScript 依據 [Promises/A+](http://promises-aplus.github.io/promises-spec/) 標準來實現最小 API 處理 promises。
 
 - [7.1](#7.1) <a name='7.1'></a> done, fail, always
 
-  `done`은 promise가 처리되었을 때, `fail`은 promise가 거절되었을 때, `always`는 promise가 어떻게 되었건 실행됩니다.
+  `done` 會在 promise 解決時調用，`fail` 會在 promise 拒絕時調用，`always` 無論 promise 解決或拒絕時都會調用。
 
   ```js
   // jQuery
@@ -1237,7 +1235,7 @@ Promise는 비동기적인 작업의 결과를 표현합니다. jQuery는 자체
 
 - [7.2](#7.2) <a name='7.2'></a> when
 
-  `when`은 여러 개의 promise들을 처리할 때 사용됩니다. 이것은 모든 promise가 처리되었을 때 resolve하고 하나라도 거절되면 reject합니다.
+  `when` 用於處理多個 promises。當全部 promises 被解決時返回，當任一 promises 被拒絕時拒絕。
 
   ```js
   // jQuery
@@ -1250,7 +1248,7 @@ Promise는 비동기적인 작업의 결과를 표현합니다. jQuery는 자체
 
 - [7.3](#7.3) <a name='7.3'></a> Deferred
 
-  Deferred는 promise를 생성하는 방법입니다.
+  Deferred 是創建 promises 的一種方式。
 
   ```js
   // jQuery
@@ -1309,7 +1307,7 @@ Promise는 비동기적인 작업의 결과를 표현합니다. jQuery는 자체
   }
   ```
 
-**[⬆ 목차로 돌아가기](#목차)**
+**[⬆ 回到頂部](#目錄)**
 
 ## Animation
 
@@ -1321,14 +1319,14 @@ Promise는 비동기적인 작업의 결과를 표현합니다. jQuery는 자체
   $el.hide();
 
   // Native
-  // show 메소드에 대한 더 자세한 정보를 보고 싶으면  https://github.com/oneuijs/oui-dom-utils/blob/master/src/index.js#L363 를 참고하세요
+  // 更多 show 方法的細節，請參考 https://github.com/oneuijs/oui-dom-utils/blob/master/src/index.js#L363
   el.style.display = ''|'inline'|'inline-block'|'inline-table'|'block';
   el.style.display = 'none';
   ```
 
 - [8.2](#8.2) <a name='8.2'></a> Toggle
 
-  엘리먼트를 출력하거나 숨깁니다.
+  顯示或隱藏元素。
 
   ```js
   // jQuery
@@ -1386,19 +1384,19 @@ Promise는 비동기적인 작업의 결과를 표현합니다. jQuery는 자체
 
 - [8.4](#8.4) <a name='8.4'></a> FadeTo
 
-  엘리먼트의 투명도(opacity)를 조정합니다.
+  調整元素的透明度。
 
   ```js
   // jQuery
   $el.fadeTo('slow',0.15);
   // Native
-  el.style.transition = 'opacity 3s'; // 'slow'가 3초라고 가정합니다.
+  el.style.transition = 'opacity 3s'; // assume 'slow' equals 3 seconds
   el.style.opacity = '0.15';
   ```
 
 - [8.5](#8.5) <a name='8.5'></a> FadeToggle
 
-  엘리먼트를 투명도를 조절해서 보여주거나 숨깁니다.
+  動畫調整透明度來顯示或隱藏。
 
   ```js
   // jQuery
@@ -1432,7 +1430,7 @@ Promise는 비동기적인 작업의 결과를 표현합니다. jQuery는 자체
 
 - [8.7](#8.7) <a name='8.7'></a> SlideToggle
 
-  슬라이딩 모션과 함께 엘리먼트를 보이거나 숨깁니다.
+  滑動效果來顯示或隱藏元素。
 
   ```js
   // jQuery
@@ -1451,7 +1449,7 @@ Promise는 비동기적인 작업의 결과를 표현합니다. jQuery는 자체
 
 - [8.8](#8.8) <a name='8.8'></a> Animate
 
-  자체적으로 CSS 프로퍼티들을 에니메이션합니다.
+  執行一組自定義動畫的 CSS 屬性。
 
   ```js
   // jQuery
@@ -1464,10 +1462,10 @@ Promise는 비동기적인 작업의 결과를 표현합니다. jQuery는 자체
   )
   ```
 
-## 대안방법
+## Alternatives
 
-* [You Might Not Need jQuery](http://youmightnotneedjquery.com/) - 일반 자바스크립트로 공통이벤트, 엘리먼트, ajax 등을 다루는 방법 예제.
-* [npm-dom](http://github.com/npm-dom) 과 [webmodules](http://github.com/webmodules) - 개별 DOM모듈을 NPM에서 찾을 수 있습니다.
+* [You Might Not Need jQuery](http://youmightnotneedjquery.com/) - Examples of how to do common event, element, ajax etc with plain javascript.
+* [npm-dom](http://github.com/npm-dom) and [webmodules](http://github.com/webmodules) - Organizations you can find individual DOM modules on NPM
 
 ## Browser Support
 

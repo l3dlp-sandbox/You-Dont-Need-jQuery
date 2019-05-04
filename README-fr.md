@@ -20,6 +20,7 @@ De nos jours, les environnements frontend évoluent si rapidement que les naviga
 ## Traductions
 
 * [한국어](./README.ko-KR.md)
+* [正體中文](./README.zh-TW.md)
 * [简体中文](./README.zh-CN.md)
 * [Bahasa Melayu](./README-my.md)
 * [Bahasa Indonesia](./README-id.md)
@@ -700,7 +701,7 @@ La plupart des utilitaires se trouvent dans l'API native. D'autres fonctions ava
 
   // Natif
   function isNumeric(item) {
-    return typeof value === 'number';
+    return typeof item === 'number';
   }
   ```
 
